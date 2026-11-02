@@ -6,15 +6,18 @@ import streamlit as st
 st.title("Личные расходы")
 
 # 1. Загрузка CSV
-df = pd.read_csv("expenses.csv")
+file = st.file_uploader("Выберите файл expenses.csv", type="csv")
 
-# 2. Оставляем только расходы (как в analysis.py)
-expenses = df[(df["Transaction Type"] == "debit") & (df["Category"] != "Credit Card Payment")]
+if file is not None:
+    df = pd.read_csv(file)
 
-# 3. Показатели
-st.write("Количество расходов:", len(expenses))
-st.write("Средний расход:", round(expenses["Amount"].mean(), 2))
+    # 2. Оставляем только расходы (как в analysis.py)
+    expenses = df[(df["Transaction Type"] == "debit") & (df["Category"] != "Credit Card Payment")]
 
-# 4. График: сумма расходов по категориям
-categories = expenses.groupby("Category")["Amount"].sum().sort_values(ascending=False)
-st.bar_chart(categories, sort=False)
+    # 3. Показатели
+    st.write("Количество расходов:", len(expenses))
+    st.write("Средний расход:", round(expenses["Amount"].mean(), 2))
+
+    # 4. График: сумма расходов по категориям
+    categories = expenses.groupby("Category")["Amount"].sum().sort_values(ascending=False)
+    st.bar_chart(categories, sort=False)
